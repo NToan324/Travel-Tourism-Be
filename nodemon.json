@@ -1,0 +1,7 @@
+{
+  "watch": ["src", ".env"],
+  "ext": ".ts,.js,json,yaml",
+  "ignore": [],
+  "exec": "tsx ./src/server.ts",
+  "restartable": "rs"
+}
