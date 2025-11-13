@@ -1,9 +1,7 @@
 import { BadRequestError, NotFoundError } from "@/core/error.response";
 import { CreatedResponse, OkResponse } from "@/core/success.response";
-import cityModel from "@/models/city.model";
-import itineraryModel from "@/models/itinerary.model";
-import scheduleItem from "@/models/schedule.model";
-import weatherSummaryModel from "@/models/weatherSummary.model";
+import scheduleModel from "@/models/schedule.model";
+import userModel from "@/models/user.model";
 import { convertObjectId } from "@/utils/convertObjectId";
 
 class ScheduleService {
@@ -14,124 +12,69 @@ class ScheduleService {
     duration_days: number;
     start_date: Date;
     end_date: Date;
-    accommodation_id?: string;
+    accommodation: {
+      name: string;
+      address: string;
+      price_range: string;
+      notes?: string;
+    };
     tips?: string[];
     weather_summary: {
-      city_id: string;
       avg_temp?: number;
       condition?: string;
       notes?: string;
     };
-    itineraries: {
+    itinerary: {
       day: number;
       title: string;
+      activities: {
+        time_start: string;
+        time_end: string;
+        description: string;
+        type: string;
+      }[];
     }[];
   }) {
-    const user = await cityModel.findById(convertObjectId(payload.user_id));
+    const user = await userModel.findById(convertObjectId(payload.user_id));
     if (!user) throw new BadRequestError("User not found");
 
-    const city = await cityModel.findById(
-      convertObjectId(payload.weather_summary.city_id)
-    );
-    if (!city) throw new BadRequestError("City not found");
-
-    const weather = await weatherSummaryModel.create({
-      city_id: payload.weather_summary.city_id,
-      avg_temp: payload.weather_summary.avg_temp ?? null,
-      condition: payload.weather_summary.condition ?? "",
-      notes: payload.weather_summary.notes ?? "",
-    });
-
-    const schedule = await scheduleItem.create({
+    const schedule = await scheduleModel.create({
       user_id: convertObjectId(payload.user_id),
       trip_id: payload.trip_id,
       location: payload.location,
       duration_days: payload.duration_days,
       start_date: payload.start_date,
       end_date: payload.end_date,
-      accommodation_id: payload.accommodation_id || null,
-      weather_summary_id: weather._id,
+
+      accommodation: payload.accommodation || null,
+      weather_summary: payload.weather_summary || null,
+      itinerary: payload.itinerary || [],
       tips: payload.tips || [],
     });
 
-    const itineraries = payload.itineraries.map((it) => ({
-      schedule_id: schedule._id,
-      day: it.day,
-      title: it.title,
-    }));
-    await itineraryModel.insertMany(itineraries);
-
-    return new CreatedResponse("Schedule created successfully", {
-      schedule,
-      weather,
-      itineraries,
-    });
+    return new CreatedResponse("Schedule created successfully", schedule);
   }
 
-  async getAll({ page, limit }: { page?: number; limit?: number }) {
-    const schedules = await scheduleItem
-      .find()
-      .populate("user_id", "email fullName")
-      .populate("accommodation_id", "name address")
-      .populate("weather_summary_id", "avg_temp condition notes")
-      .paginate({ page: page, limit: limit });
-
-    const itineraries = await itineraryModel.find({
-      schedule_id: { $in: schedules.docs.map((s) => s._id) },
-    });
-
-    const data = schedules.docs.map((schedule) => ({
-      ...schedule.toObject(),
-      user: schedule.user_id,
-      accommodation: schedule.accommodation_id,
-      weather_summary: schedule.weather_summary_id,
-      itineraries: itineraries.filter(
-        (it) => it.schedule_id.toString() === schedule._id.toString()
-      ),
-
-      user_id: undefined,
-      accommodation_id: undefined,
-      weather_summary_id: undefined,
-    }));
-
-    const pagination = {
-      totalDocs: schedules.totalDocs,
-      limit: schedules.limit,
-      page: schedules.page,
-      totalPages: schedules.totalPages,
-    };
+  async getAll({ page = 1, limit = 10 }: { page?: number; limit?: number }) {
+    const schedules = await scheduleModel.find().populate("user_id", "email fullName").paginate({ page, limit });
 
     return new OkResponse("Get all schedules successfully", {
-      docs: data,
-      pagination,
+      docs: schedules.docs,
+      pagination: {
+        totalDocs: schedules.totalDocs,
+        limit: schedules.limit,
+        page: schedules.page,
+        totalPages: schedules.totalPages,
+      },
     });
   }
 
   async getById(id: string) {
-    const schedule = await scheduleItem
-      .findById(convertObjectId(id))
-      .populate("user_id", "email fullName")
-      .populate("accommodation_id", "name address")
-      .populate("weather_summary_id", "avg_temp condition notes");
+    const schedule = await scheduleModel.findById(convertObjectId(id)).populate("user_id", "email fullName");
 
     if (!schedule) throw new NotFoundError("Schedule not found");
 
-    const itineraries = await itineraryModel.find({
-      schedule_id: schedule._id,
-    });
-
-    const scheduleData = {
-      ...schedule.toObject(),
-      user: schedule.user_id,
-      accommodation: schedule.accommodation_id,
-      weather_summary: schedule.weather_summary_id,
-      itineraries,
-      user_id: undefined,
-      accommodation_id: undefined,
-      weather_summary_id: undefined,
-    };
-
-    return new OkResponse("Get schedule successfully", scheduleData);
+    return new OkResponse("Get schedule successfully", schedule);
   }
 
   async update(
@@ -142,45 +85,40 @@ class ScheduleService {
       start_date: Date;
       end_date: Date;
       tips: string[];
-      itineraries: { day: number; title: string }[];
+      accommodation: {
+        name: string;
+        address: string;
+        price_range: string;
+        notes?: string;
+      };
       weather_summary: {
         avg_temp?: number;
         condition?: string;
         notes?: string;
       };
+      itinerary: {
+        day: number;
+        title: string;
+        activities: {
+          time_start: string;
+          time_end: string;
+          description: string;
+          type: string;
+        }[];
+      }[];
     }>
   ) {
-    const schedule = await scheduleItem.findById(convertObjectId(id));
+    const schedule = await scheduleModel.findById(convertObjectId(id));
     if (!schedule) throw new NotFoundError("Schedule not found");
 
-    await scheduleItem.findByIdAndUpdate(id, payload, { new: true });
-
-    if (payload.weather_summary) {
-      await weatherSummaryModel.findByIdAndUpdate(
-        schedule.weather_summary_id,
-        payload.weather_summary
-      );
-    }
-
-    if (payload.itineraries && payload.itineraries.length > 0) {
-      await itineraryModel.deleteMany({ schedule_id: schedule._id });
-      const newItineraries = payload.itineraries.map((it) => ({
-        schedule_id: schedule._id,
-        day: it.day,
-        title: it.title,
-      }));
-      await itineraryModel.insertMany(newItineraries);
-    }
+    await scheduleModel.findByIdAndUpdate(id, payload, { new: true });
 
     return new OkResponse("Schedule updated successfully");
   }
 
   async delete(id: string) {
-    const schedule = await scheduleItem.findByIdAndDelete(convertObjectId(id));
+    const schedule = await scheduleModel.findByIdAndDelete(convertObjectId(id));
     if (!schedule) throw new NotFoundError("Schedule not found");
-
-    await weatherSummaryModel.findByIdAndDelete(schedule.weather_summary_id);
-    await itineraryModel.deleteMany({ schedule_id: schedule._id });
 
     return new OkResponse("Schedule deleted successfully");
   }

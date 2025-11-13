@@ -1,5 +1,4 @@
 import type { Request, Response } from "express";
-
 import scheduleService from "@/services/schedule.service";
 
 class ScheduleController {
@@ -11,11 +10,12 @@ class ScheduleController {
       duration_days,
       start_date,
       end_date,
-      accommodation_id,
+      accommodation,
       tips,
       weather_summary,
-      itineraries,
+      itinerary, // đổi từ itineraries → itinerary
     } = req.body;
+
     res.status(201).send(
       await scheduleService.create({
         user_id,
@@ -24,16 +24,17 @@ class ScheduleController {
         duration_days,
         start_date,
         end_date,
-        accommodation_id,
+        accommodation,
         tips,
         weather_summary,
-        itineraries,
+        itinerary,
       })
     );
   }
 
   async getAll(req: Request, res: Response) {
     const { page = 1, limit = 10 } = req.query;
+
     res.status(200).send(
       await scheduleService.getAll({
         page: Number(page),
@@ -55,8 +56,10 @@ class ScheduleController {
       end_date,
       tips,
       weather_summary,
-      itineraries,
+      accommodation,
+      itinerary,
     } = req.body;
+
     res.status(200).send(
       await scheduleService.update(req.params.id, {
         location,
@@ -65,7 +68,8 @@ class ScheduleController {
         end_date,
         tips,
         weather_summary,
-        itineraries,
+        accommodation,
+        itinerary,
       })
     );
   }
