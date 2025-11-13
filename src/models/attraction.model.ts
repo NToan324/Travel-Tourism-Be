@@ -1,6 +1,21 @@
 import mongoose, { type InferSchemaType, model } from "mongoose";
 import mongoosePaginate from "mongoose-paginate-v2";
 
+const sectionSchema = new mongoose.Schema({
+  title: {
+    type: String,
+    required: true,
+  },
+  content: {
+    type: String,
+    required: true,
+  },
+  images: {
+    type: [String],
+    default: [],
+  },
+});
+
 const attractionSchema = new mongoose.Schema({
   city_id: {
     type: mongoose.Schema.Types.ObjectId,
@@ -22,6 +37,19 @@ const attractionSchema = new mongoose.Schema({
   opening_hours: {
     type: String,
     default: "",
+  },
+  sections: {
+    type: [sectionSchema],
+    default: [],
+  },
+
+  created_at: {
+    type: Date,
+    default: Date.now,
+  },
+  updated_at: {
+    type: Date,
+    default: Date.now,
   },
 });
 

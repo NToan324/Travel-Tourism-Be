@@ -12,7 +12,7 @@ class FoodController {
       address,
       price_range,
       image_urls,
-      sections, 
+      sections,
     } = req.body;
 
     res.status(201).send(
@@ -24,7 +24,7 @@ class FoodController {
         address,
         price_range,
         image_urls,
-        sections, 
+        sections,
       })
     );
   }
@@ -39,7 +39,7 @@ class FoodController {
       address,
       price_range,
       image_urls,
-      sections, 
+      sections,
     } = req.body;
 
     res.status(200).send(
@@ -70,6 +70,16 @@ class FoodController {
     res.status(200).send(await foodService.getById(id));
   }
 
+  async getByCityId(req: Request, res: Response) {
+    const { id, page = 1, limit = 10 } = req.params;
+    res.status(200).send(
+      await foodService.getByCityId({
+        id,
+        page: Number(page),
+        limit: Number(limit),
+      })
+    );
+  }
 
   async delete(req: Request, res: Response) {
     const { id } = req.params;

@@ -4,7 +4,8 @@ import attractionService from "@/services/attraction.service";
 
 class AttractionController {
   async create(req: Request, res: Response) {
-    const { city_id, name, description, image_urls, opening_hours } = req.body;
+    const { city_id, name, description, image_urls, opening_hours, sections } =
+      req.body;
 
     res.status(201).send(
       await attractionService.create({
@@ -13,16 +14,19 @@ class AttractionController {
         description,
         image_urls,
         opening_hours,
+        sections,
       })
     );
   }
 
   async getAll(req: Request, res: Response) {
-    const { page = 1, limit = 10 } = req.query;
+    const { page = 1, limit = 10, search } = req.query;
+
     res.status(200).send(
       await attractionService.getAll({
         page: Number(page),
         limit: Number(limit),
+        search: typeof search === "string" ? search : undefined,
       })
     );
   }
@@ -32,9 +36,21 @@ class AttractionController {
     res.status(200).send(await attractionService.getById(id));
   }
 
+  async getByCityId(req: Request, res: Response) {
+    const { id, page = 1, limit = 10 } = req.params;
+    res.status(200).send(
+      await attractionService.getByCityId({
+        id,
+        page: Number(page),
+        limit: Number(limit),
+      })
+    );
+  }
+
   async update(req: Request, res: Response) {
     const { id } = req.params;
-    const { city_id, name, description, image_urls, opening_hours } = req.body;
+    const { city_id, name, description, image_urls, opening_hours, sections } =
+      req.body;
 
     res.status(200).send(
       await attractionService.update(id, {
@@ -43,6 +59,7 @@ class AttractionController {
         description,
         image_urls,
         opening_hours,
+        sections,
       })
     );
   }

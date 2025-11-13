@@ -10,6 +10,11 @@ class AttractionService {
     description?: string;
     image_urls?: string[];
     opening_hours?: string;
+    sections?: Array<{
+      title: string;
+      content: string;
+      images?: string[];
+    }>;
   }) {
     const existing = await attractionModel.findOne({
       name: payload.name,
@@ -26,9 +31,23 @@ class AttractionService {
     return new CreatedResponse("Attraction created successfully", attraction);
   }
 
-  async getAll({ page, limit }: { page?: number; limit?: number }) {
+  async getAll({
+    page,
+    limit,
+    search,
+  }: {
+    page?: number;
+    limit?: number;
+    search?: string;
+  }) {
     const attractions = await attractionModel
-      .find()
+      .find(
+        search ?
+          {
+            name: { $regex: search, $options: "i" },
+          }
+        : {}
+      )
       .populate("city_id", "name")
       .paginate({ page, limit });
 
@@ -66,6 +85,41 @@ class AttractionService {
     return new OkResponse("Get attraction successfully", data);
   }
 
+  async getByCityId({
+    id,
+    page,
+    limit,
+  }: {
+    id: string;
+    page?: number;
+    limit?: number;
+  }) {
+    const attraction = await attractionModel
+      .find({ city_id: convertObjectId(id) })
+      .populate("city_id", "name")
+      .paginate({ page, limit });
+
+    if (!attraction) throw new NotFoundError("Attraction not found");
+
+    const data = attraction.docs.map((attraction) => ({
+      ...attraction.toObject(),
+      city: attraction.city_id,
+      city_id: undefined,
+    }));
+
+    const pagination = {
+      totalDocs: attraction.totalDocs,
+      limit: attraction.limit,
+      page: attraction.page,
+      totalPages: attraction.totalPages,
+    };
+
+    return new OkResponse("Get attractions successfully", {
+      docs: data,
+      pagination,
+    });
+  }
+
   async update(
     id: string,
     payload: {
@@ -74,6 +128,11 @@ class AttractionService {
       description?: string;
       image_urls?: string[];
       opening_hours?: string;
+      sections?: Array<{
+        title: string;
+        content: string;
+        images?: string[];
+      }>;
     }
   ) {
     const attraction = await attractionModel.findByIdAndUpdate(
