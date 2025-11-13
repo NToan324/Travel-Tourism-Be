@@ -1,5 +1,10 @@
 import { z } from "zod";
 
+const sectionSchema = z.object({
+  title: z.string().nonempty("Section title is required"),
+  content: z.string().nonempty("Section content is required"),
+  images: z.array(z.string().url()).optional(),
+});
 export class AttractionValidation {
   static create() {
     return {
@@ -9,6 +14,7 @@ export class AttractionValidation {
         description: z.string().optional(),
         image_urls: z.array(z.string().url()).optional(),
         opening_hours: z.string().optional(),
+        sections: z.array(sectionSchema).optional(),
       }),
     };
   }
@@ -21,6 +27,7 @@ export class AttractionValidation {
         description: z.string().optional(),
         image_urls: z.array(z.string().url()).optional(),
         opening_hours: z.string().optional(),
+        sections: z.array(sectionSchema).optional(),
       }),
       params: z.object({
         id: z.string().nonempty("Attraction ID is required"),

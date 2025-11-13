@@ -60,6 +60,41 @@ class FoodService {
     return new OkResponse("Get food successfully", data);
   }
 
+  async getByCityId({
+    id,
+    page,
+    limit,
+  }: {
+    id: string;
+    page?: number;
+    limit?: number;
+  }) {
+    const food = await foodModel
+      .find({ city_id: convertObjectId(id) })
+      .populate("city_id", "name country")
+      .paginate({ page, limit });
+
+    if (!food) throw new NotFoundError("Food not found");
+
+    const data = food.docs.map((food) => ({
+      ...food.toObject(),
+      city: food.city_id,
+      city_id: undefined,
+    }));
+
+    const pagination = {
+      totalDocs: food.totalDocs,
+      limit: food.limit,
+      page: food.page,
+      totalPages: food.totalPages,
+    };
+
+    return new OkResponse("Get foods successfully", {
+      docs: data,
+      pagination,
+    });
+  }
+
   async update(
     id: string,
     payload: {

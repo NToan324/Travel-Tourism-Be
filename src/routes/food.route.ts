@@ -18,6 +18,12 @@ router.post(
 router.get("/", asyncHandler(foodController.getAll));
 
 router.get(
+  "/city/:id",
+  validationRequest(FoodValidation.idParam()),
+  asyncHandler(foodController.getByCityId)
+);
+
+router.get(
   "/:id",
   validationRequest(FoodValidation.idParam()),
   asyncHandler(foodController.getById)

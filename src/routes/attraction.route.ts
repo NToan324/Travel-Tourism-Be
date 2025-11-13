@@ -18,6 +18,12 @@ router.post(
 router.get("/", asyncHandler(attractionController.getAll));
 
 router.get(
+  "/city/:id",
+  validationRequest(AttractionValidation.idParam()),
+  asyncHandler(attractionController.getByCityId)
+);
+
+router.get(
   "/:id",
   validationRequest(AttractionValidation.idParam()),
   asyncHandler(attractionController.getById)
