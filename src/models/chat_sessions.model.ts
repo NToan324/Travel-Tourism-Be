@@ -1,5 +1,6 @@
 import mongoose, { type InferSchemaType, model } from "mongoose";
 import mongoosePaginate from "mongoose-paginate-v2";
+import {chatDbConnection} from "@/dbs/init.mongodb";
 
 // Schema con cho từng tin nhắn trong mảng messages
 const messageSchema = new mongoose.Schema({
@@ -55,5 +56,6 @@ export type ChatSession = InferSchemaType<typeof chatSessionSchema> & {
     _id: mongoose.Types.ObjectId;
 };
 
-const chatSessionModel = model<ChatSession>("ChatSession", chatSessionSchema);
+// const chatSessionModel = model<ChatSession>("ChatSession", chatSessionSchema);
+const chatSessionModel = chatDbConnection.model<ChatSession>("ChatSession", chatSessionSchema, "chat_sessions");
 export default chatSessionModel;

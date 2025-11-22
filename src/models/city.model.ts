@@ -1,5 +1,6 @@
 import mongoose, { type InferSchemaType, model } from "mongoose";
 import mongoosePaginate from "mongoose-paginate-v2";
+import { tourismDbConnection } from "@/dbs/init.mongodb";
 
 const citySchema = new mongoose.Schema({
   name: {
@@ -26,5 +27,5 @@ export type City = InferSchemaType<typeof citySchema> & {
   _id: mongoose.Types.ObjectId;
 };
 
-const cityModel = model<City>("City", citySchema);
+const cityModel = tourismDbConnection.model<City>("City", citySchema, "cities");
 export default cityModel;

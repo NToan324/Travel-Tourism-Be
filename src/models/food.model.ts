@@ -1,5 +1,6 @@
 import mongoose, { type InferSchemaType, model } from "mongoose";
 import mongoosePagination from "mongoose-paginate-v2";
+import { tourismDbConnection } from "@/dbs/init.mongodb";
 
 const sectionSchema = new mongoose.Schema({
   title: {
@@ -74,5 +75,5 @@ export type Food = InferSchemaType<typeof foodSchema> & {
   _id: mongoose.Types.ObjectId;
 };
 
-const foodModel = model<Food>("Food", foodSchema);
+const foodModel = tourismDbConnection.model<Food>("Food", foodSchema, "foods");
 export default foodModel;

@@ -1,5 +1,6 @@
 import bcrypt from "bcryptjs";
 import mongoose, { type InferSchemaType, model } from "mongoose";
+import { tourismDbConnection } from "@/dbs/init.mongodb";
 
 import { ROLE } from "@/constants";
 
@@ -42,6 +43,6 @@ userSchema.pre<User>("save", async function (next) {
   this.password = await bcrypt.hash(this.password, salt);
   next();
 });
-
-const userModel = model<User>("User", userSchema);
+  
+const userModel = tourismDbConnection.model<User>("User", userSchema, "users");
 export default userModel;

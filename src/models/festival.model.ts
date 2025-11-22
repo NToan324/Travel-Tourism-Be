@@ -1,5 +1,6 @@
 import mongoose, { type InferSchemaType, model } from "mongoose";
 import mongoosePaginate from "mongoose-paginate-v2";
+import { tourismDbConnection } from "@/dbs/init.mongodb";
 
 const festivalSchema = new mongoose.Schema({
   city_id: {
@@ -35,5 +36,5 @@ export type Festival = InferSchemaType<typeof festivalSchema> & {
   _id: mongoose.Types.ObjectId;
 };
 
-const festivalModel = model<Festival>("Festival", festivalSchema);
+const festivalModel = tourismDbConnection.model<Festival>("Festival", festivalSchema, "festivals");
 export default festivalModel;

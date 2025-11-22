@@ -12,4 +12,9 @@ router.get(
   asyncHandler(chatController.getChatHistory)
 );
 
+router.get("/:sessionId",
+  authenticate,
+  asyncHandler(chatController.getChatBySessionId)
+);
+
 export default router;

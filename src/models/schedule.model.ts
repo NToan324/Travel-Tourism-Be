@@ -1,5 +1,6 @@
 import mongoose, { type InferSchemaType, model } from "mongoose";
 import mongoosePaginate from "mongoose-paginate-v2";
+import { tourismDbConnection } from "@/dbs/init.mongodb";
 
 // ───────────────── Sub-schemas ─────────────────
 
@@ -151,5 +152,5 @@ export type Schedule = InferSchemaType<typeof scheduleSchema> & {
   _id: mongoose.Types.ObjectId;
 };
 
-const scheduleModel = model<Schedule>("Schedule", scheduleSchema);
+const scheduleModel = tourismDbConnection.model<Schedule>("Schedule", scheduleSchema, "schedules");
 export default scheduleModel;

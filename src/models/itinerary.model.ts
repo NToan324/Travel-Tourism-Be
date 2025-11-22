@@ -1,4 +1,5 @@
 import mongoose, { type InferSchemaType, model } from "mongoose";
+import { tourismDbConnection } from "@/dbs/init.mongodb";
 
 const itinerarySchema = new mongoose.Schema({
   schedule_id: {
@@ -20,5 +21,5 @@ export type Itinerary = InferSchemaType<typeof itinerarySchema> & {
   _id: mongoose.Types.ObjectId;
 };
 
-const itineraryModel = model<Itinerary>("Itinerary", itinerarySchema);
+const itineraryModel = tourismDbConnection.model<Itinerary>("Itinerary", itinerarySchema, "itineraries");
 export default itineraryModel;
