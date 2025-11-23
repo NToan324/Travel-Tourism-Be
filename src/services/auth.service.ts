@@ -16,7 +16,7 @@ const generateJwt = (
     fullName: string;
     role: string;
   },
-  expiration?: StringValue | number,
+  expiration?: StringValue | number
 ) => {
   return jwt.sign(
     {
@@ -25,7 +25,7 @@ const generateJwt = (
     process.env.DEV_JWT_SECRET_KEY as string,
     {
       expiresIn: expiration || "1d",
-    },
+    }
   );
 };
 
@@ -72,19 +72,22 @@ class AuthService {
 
     const isPasswordValid = await bycrypt.compare(
       payload.password,
-      user.password,
+      user.password
     );
 
     if (!isPasswordValid) {
       throw new BadRequestError("Password is incorrect");
     }
 
-    const accessToken = generateJwt({
-      email: user.email,
-      id: user._id.toString(),
-      fullName: user.fullName,
-      role: user.role,
-    });
+    const accessToken = generateJwt(
+      {
+        email: user.email,
+        id: user._id.toString(),
+        fullName: user.fullName,
+        role: user.role,
+      },
+      "2h"
+    );
 
     const refreshToken = generateJwt(
       {
@@ -93,7 +96,7 @@ class AuthService {
         fullName: user.fullName,
         role: user.role,
       },
-      "7d",
+      "7d"
     );
     const { password, ...userData } = user.toObject();
     return new OkResponse("Login successfully", {
@@ -124,7 +127,7 @@ class AuthService {
         fullName: user.fullName,
         role: user.role,
       },
-      "2h",
+      "2h"
     );
 
     const refreshToken = generateJwt(
@@ -134,7 +137,7 @@ class AuthService {
         fullName: user.fullName,
         role: user.role,
       },
-      "7d",
+      "7d"
     );
 
     return new OkResponse("Token refreshed successfully", {
@@ -226,7 +229,7 @@ class AuthService {
       process.env.DEV_JWT_SECRET_KEY as string,
       {
         expiresIn: "10m",
-      },
+      }
     );
 
     await redisClient.del(`OTP-${user.id}`);
@@ -237,7 +240,7 @@ class AuthService {
   async resetPassword(payload: { resetToken: string; password: string }) {
     const decodeToken = jwt.verify(
       payload.resetToken,
-      process.env.DEV_JWT_SECRET_KEY as string,
+      process.env.DEV_JWT_SECRET_KEY as string
     );
     const user = decodeToken as JwtPayload;
     const foundUser = await userModel.findById(user.userId);
@@ -248,12 +251,12 @@ class AuthService {
 
     const isExistingPassword = await bycrypt.compare(
       payload.password,
-      foundUser.password,
+      foundUser.password
     );
 
     if (isExistingPassword) {
       throw new BadRequestError(
-        "New password must be different from old password",
+        "New password must be different from old password"
       );
     }
 

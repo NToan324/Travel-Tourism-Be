@@ -114,6 +114,6 @@ export type Place = InferSchemaType<typeof placeSchema> & {
 const placeModel = tourismDbConnection.model<Place>(
   "Place",
   placeSchema,
-  "places",
+  "places"
 );
 export default placeModel;

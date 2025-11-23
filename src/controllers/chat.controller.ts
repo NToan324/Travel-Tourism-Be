@@ -11,21 +11,18 @@ class ChatController {
         userId,
         page: Number(page),
         limit: Number(limit),
-      }),
+      })
     );
   }
 
   async getChatBySessionId(req: Request, res: Response) {
     const { sessionId } = req.params;
     const { id: userId } = req.user!;
-    const { page = 1, limit = 10 } = req.query;
     res.status(200).send(
       await chatService.getChatBySessionId({
         userId,
         sessionId,
-        page: Number(page),
-        limit: Number(limit),
-      }),
+      })
     );
   }
 }
