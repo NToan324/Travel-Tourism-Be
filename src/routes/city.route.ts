@@ -12,7 +12,7 @@ router.post(
   "/",
   authenticate,
   validationRequest(CityValidation.create()),
-  asyncHandler(cityController.create)
+  asyncHandler(cityController.create),
 );
 
 router.get("/", asyncHandler(cityController.getAll));
@@ -20,21 +20,21 @@ router.get("/", asyncHandler(cityController.getAll));
 router.get(
   "/:id",
   validationRequest(CityValidation.idParam()),
-  asyncHandler(cityController.getById)
+  asyncHandler(cityController.getById),
 );
 
 router.put(
   "/:id",
   authenticate,
   validationRequest(CityValidation.update()),
-  asyncHandler(cityController.update)
+  asyncHandler(cityController.update),
 );
 
 router.delete(
   "/:id",
   authenticate,
   validationRequest(CityValidation.idParam()),
-  asyncHandler(cityController.delete)
+  asyncHandler(cityController.delete),
 );
 
 export default router;

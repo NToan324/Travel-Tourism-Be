@@ -6,7 +6,7 @@ import { ForbiddenError, UnauthorizedError } from "@/core/error.response";
 export const authenticate = (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
 ) => {
   try {
     const authHeader = req.headers.authorization;

@@ -1,4 +1,5 @@
 import "@/dbs/init.mongodb";
+import "@/configs/redis.config";
 
 import compression from "compression";
 import cookieParser from "cookie-parser";
@@ -76,7 +77,7 @@ class Server {
 
     this.server.listen(PORT, () => {
       console.log(
-        `[Server] Running at [http://${HOST_ADDRESS}:${PORT}/api/v1]`
+        `[Server] Running at [http://${HOST_ADDRESS}:${PORT}/api/v1]`,
       );
     });
   }

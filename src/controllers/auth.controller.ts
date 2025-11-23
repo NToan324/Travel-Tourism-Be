@@ -3,9 +3,16 @@ import type { Request, Response } from "express";
 import authService from "@/services/auth.service";
 
 class AuthController {
+  async getMe(req: Request, res: Response) {
+    const { id } = req.user!;
+    res.status(200).send(await authService.getMe(id));
+  }
+
   async signUp(req: Request, res: Response) {
-    const { email, password } = req.body;
-    res.status(201).send(await authService.signUp({ email, password }));
+    const { fullName, email, password } = req.body;
+    res
+      .status(201)
+      .send(await authService.signUp({ fullName, email, password }));
   }
 
   async login(req: Request, res: Response) {
@@ -18,6 +25,28 @@ class AuthController {
     res
       .status(200)
       .send(await authService.refreshToken({ id, email, fullName, role }));
+  }
+
+  async forgotPassword(req: Request, res: Response) {
+    const { email } = req.body;
+    res.status(200).send(await authService.forgotPassword({ email }));
+  }
+
+  async resendOtp(req: Request, res: Response) {
+    const { userId } = req.body;
+    res.status(200).send(await authService.resendOtp({ userId }));
+  }
+
+  async verifyOtp(req: Request, res: Response) {
+    const { userId, otp } = req.body;
+    res.status(200).send(await authService.verifyOtp({ userId, otp }));
+  }
+
+  async resetPassword(req: Request, res: Response) {
+    const { resetToken, password } = req.body;
+    res
+      .status(200)
+      .send(await authService.resetPassword({ resetToken, password }));
   }
 }
 

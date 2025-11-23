@@ -12,7 +12,7 @@ export default class ErrorHandling {
     err: CustomError,
     req: Request,
     res: Response,
-    next: NextFunction
+    next: NextFunction,
   ) {
     const status = err.status || StatusCodes.INTERNAL_SERVER_ERROR;
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({

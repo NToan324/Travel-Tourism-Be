@@ -1,21 +1,29 @@
 import { z } from "zod";
 
+import { PLACE } from "@/constants";
+
 const ActivitySchema = z.object({
-  time_start: z.string().regex(/^\d{2}:\d{2}$/, "Invalid time_start format (HH:MM)"),
-  time_end: z.string().regex(/^\d{2}:\d{2}$/, "Invalid time_end format (HH:MM)"),
+  time_start: z
+    .string()
+    .regex(/^\d{2}:\d{2}$/, "Invalid time_start format (HH:MM)"),
+  time_end: z
+    .string()
+    .regex(/^\d{2}:\d{2}$/, "Invalid time_end format (HH:MM)"),
   description: z.string().nonempty("Description is required"),
-  type: z.enum(["Food", "Attraction", "Accommodation", "Festival", "Transport"]),
+  type: z.nativeEnum(PLACE),
 });
 
 const ItinerarySchema = z.object({
   day: z.number().int().positive(),
   title: z.string().nonempty("Title is required"),
-  activities: z.array(ActivitySchema).min(1, "Each day must have at least one activity"),
+  activities: z
+    .array(ActivitySchema)
+    .min(1, "Each day must have at least one activity"),
 });
 
 const WeatherSummarySchema = z.object({
-  avg_temp: z.number(),
-  condition: z.string(),
+  avg_temp: z.number().optional(),
+  condition: z.string({ message: "Condition is required" }).optional(),
   notes: z.string().optional(),
 });
 
@@ -32,6 +40,7 @@ export class ScheduleValidation {
       body: z.object({
         user_id: z.string().nonempty("User ID is required"),
         trip_id: z.string().nonempty("Trip ID is required"),
+        trip_cover_image: z.string().optional(),
 
         location: z.string().nonempty("Location is required"),
         duration_days: z.number().int().positive("Duration must be positive"),
@@ -62,6 +71,7 @@ export class ScheduleValidation {
         duration_days: z.number().int().positive().optional(),
         start_date: z.coerce.date().optional(),
         end_date: z.coerce.date().optional(),
+        trip_cover_image: z.string().optional(),
 
         tips: z.array(z.string()).optional(),
 
@@ -73,7 +83,6 @@ export class ScheduleValidation {
       }),
     };
   }
-
 
   static idParam() {
     return {

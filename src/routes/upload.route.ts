@@ -9,13 +9,13 @@ const router = Router();
 router.post(
   "/multiple",
   uploadDisk.array("files", 10),
-  asyncHandler(uploadController.uploadMultiImages)
+  asyncHandler(uploadController.uploadMultiImages),
 );
 
 router.post(
   "/",
   uploadDisk.single("file"),
-  asyncHandler(uploadController.uploadImage)
+  asyncHandler(uploadController.uploadImage),
 );
 
 export default router;

@@ -46,12 +46,12 @@ class CityService {
       country?: string;
       description?: string;
       image_urls?: string[];
-    }
+    },
   ) {
     const city = await cityModel.findByIdAndUpdate(
       convertObjectId(id),
       payload,
-      { new: true }
+      { new: true },
     );
     if (!city) throw new NotFoundError("City not found");
     return new OkResponse("City updated successfully", city);

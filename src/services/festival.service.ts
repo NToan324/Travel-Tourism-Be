@@ -74,7 +74,7 @@ class FestivalService {
       start_date?: Date;
       end_date?: Date;
       image_urls?: string[];
-    }
+    },
   ) {
     if (payload.city_id) {
       const city = await cityModel.findById(convertObjectId(payload.city_id));

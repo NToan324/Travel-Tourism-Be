@@ -12,7 +12,7 @@ class CityController {
         country: country,
         description: description,
         image_urls: image_urls,
-      })
+      }),
     );
   }
 
@@ -22,7 +22,7 @@ class CityController {
       await cityService.getAll({
         page: Number(page),
         limit: Number(limit),
-      })
+      }),
     );
   }
 
@@ -40,7 +40,7 @@ class CityController {
         country,
         description,
         image_urls,
-      })
+      }),
     );
   }
 

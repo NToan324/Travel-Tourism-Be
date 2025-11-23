@@ -22,7 +22,7 @@ export class Cloudinary {
   static async deleteImages(publicIds: string[]) {
     try {
       await Promise.all(
-        publicIds.map((publicId) => cloudinary.uploader.destroy(publicId))
+        publicIds.map((publicId) => cloudinary.uploader.destroy(publicId)),
       );
     } catch (error) {
       throw new Error("Failed to delete images from Cloudinary");

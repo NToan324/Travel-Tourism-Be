@@ -28,6 +28,7 @@ declare global {
 
 declare module "jsonwebtoken" {
   interface JwtPayload {
+    userId?: string;
     id: string;
     email: string;
     fullName: string;

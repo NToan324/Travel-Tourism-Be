@@ -15,20 +15,18 @@ class FestivalController {
         start_date,
         end_date,
         image_urls,
-      })
+      }),
     );
   }
 
   async getAll(req: Request, res: Response) {
     const { page = 1, limit = 10 } = req.query;
-    res
-      .status(200)
-      .send(
-        await festivalService.getAll({
-          page: Number(page),
-          limit: Number(limit),
-        })
-      );
+    res.status(200).send(
+      await festivalService.getAll({
+        page: Number(page),
+        limit: Number(limit),
+      }),
+    );
   }
 
   async getById(req: Request, res: Response) {
@@ -49,7 +47,7 @@ class FestivalController {
         start_date,
         end_date,
         image_urls,
-      })
+      }),
     );
   }
 

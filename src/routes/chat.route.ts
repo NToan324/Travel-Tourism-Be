@@ -9,12 +9,13 @@ const router = Router();
 router.get(
   "/history",
   authenticate,
-  asyncHandler(chatController.getChatHistory)
+  asyncHandler(chatController.getChatHistory),
 );
 
-router.get("/:sessionId",
+router.get(
+  "/:sessionId",
   authenticate,
-  asyncHandler(chatController.getChatBySessionId)
+  asyncHandler(chatController.getChatBySessionId),
 );
 
 export default router;

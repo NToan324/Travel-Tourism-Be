@@ -1,10 +1,11 @@
 import type { Request, Response } from "express";
+
 import scheduleService from "@/services/schedule.service";
 
 class ScheduleController {
   async create(req: Request, res: Response) {
+    const { id: user_id } = req.user!;
     const {
-      user_id,
       trip_id,
       location,
       duration_days,
@@ -13,7 +14,8 @@ class ScheduleController {
       accommodation,
       tips,
       weather_summary,
-      itinerary, // đổi từ itineraries → itinerary
+      itinerary,
+      trip_cover_image,
     } = req.body;
 
     res.status(201).send(
@@ -26,9 +28,10 @@ class ScheduleController {
         end_date,
         accommodation,
         tips,
+        trip_cover_image,
         weather_summary,
         itinerary,
-      })
+      }),
     );
   }
 
@@ -39,7 +42,24 @@ class ScheduleController {
       await scheduleService.getAll({
         page: Number(page),
         limit: Number(limit),
-      })
+      }),
+    );
+  }
+
+  async getByUserId(req: Request, res: Response) {
+    const { id: user_id } = req.user!;
+    const { page = 1, limit = 10, search, from_date, to_date } = req.query;
+
+    res.status(200).send(
+      await scheduleService.getByUserId({
+        user_id,
+        page: Number(page),
+        limit: Number(limit),
+        search: typeof search === "string" ? search : undefined,
+        from_date:
+          typeof from_date === "string" ? new Date(from_date) : undefined,
+        to_date: typeof to_date === "string" ? new Date(to_date) : undefined,
+      }),
     );
   }
 
@@ -55,6 +75,7 @@ class ScheduleController {
       start_date,
       end_date,
       tips,
+      trip_cover_image,
       weather_summary,
       accommodation,
       itinerary,
@@ -68,9 +89,10 @@ class ScheduleController {
         end_date,
         tips,
         weather_summary,
+        trip_cover_image,
         accommodation,
         itinerary,
-      })
+      }),
     );
   }
 

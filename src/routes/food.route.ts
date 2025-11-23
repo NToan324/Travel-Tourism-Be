@@ -12,7 +12,7 @@ router.post(
   "/",
   authenticate,
   validationRequest(FoodValidation.create()),
-  asyncHandler(foodController.create)
+  asyncHandler(foodController.create),
 );
 
 router.get("/", asyncHandler(foodController.getAll));
@@ -20,27 +20,27 @@ router.get("/", asyncHandler(foodController.getAll));
 router.get(
   "/city/:id",
   validationRequest(FoodValidation.idParam()),
-  asyncHandler(foodController.getByCityId)
+  asyncHandler(foodController.getByCityId),
 );
 
 router.get(
   "/:id",
   validationRequest(FoodValidation.idParam()),
-  asyncHandler(foodController.getById)
+  asyncHandler(foodController.getById),
 );
 
 router.put(
   "/:id",
   authenticate,
   validationRequest(FoodValidation.update()),
-  asyncHandler(foodController.update)
+  asyncHandler(foodController.update),
 );
 
 router.delete(
   "/:id",
   authenticate,
   validationRequest(FoodValidation.idParam()),
-  asyncHandler(foodController.delete)
+  asyncHandler(foodController.delete),
 );
 
 export default router;

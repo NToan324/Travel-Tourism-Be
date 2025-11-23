@@ -25,7 +25,7 @@ class FoodController {
         price_range,
         image_urls,
         sections,
-      })
+      }),
     );
   }
 
@@ -52,7 +52,7 @@ class FoodController {
         price_range,
         image_urls,
         sections,
-      })
+      }),
     );
   }
   async getAll(req: Request, res: Response) {
@@ -61,7 +61,7 @@ class FoodController {
       await foodService.getAll({
         page: Number(page),
         limit: Number(limit),
-      })
+      }),
     );
   }
 
@@ -77,7 +77,7 @@ class FoodController {
         id,
         page: Number(page),
         limit: Number(limit),
-      })
+      }),
     );
   }
 
