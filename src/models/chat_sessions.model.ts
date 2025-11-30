@@ -17,6 +17,12 @@ const messageSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
+    trip_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Schedule",
+        required: false,
+    }
+
 }, { _id: false });
 
 // Schema chính cho Chat Session

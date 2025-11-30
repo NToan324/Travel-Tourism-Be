@@ -98,7 +98,7 @@ const scheduleSchema = new mongoose.Schema({
     required: true,
   },
   trip_id: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
     required: true,
   },
 

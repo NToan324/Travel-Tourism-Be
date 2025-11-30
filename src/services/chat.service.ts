@@ -1,6 +1,7 @@
 import { BadRequestError } from "@/core/error.response";
 import { OkResponse } from "@/core/success.response";
 import chatSessionModel from "@/models/chat_sessions.model";
+import scheduleModel from "@/models/schedule.model";
 import mongoose from "mongoose";
 
 class ChatService {
@@ -52,9 +53,14 @@ class ChatService {
                 {
                     $project: {
                         session_id: 1,
-                        _id: 0,
                         totalMessages: { $size: "$messages" },
-                        messages: { $slice: ["$messages", skip, limit] }
+                        messages: {
+                            $slice: [
+                                { $reverseArray: "$messages" },
+                                skip,
+                                limit
+                            ]
+                        }
                     }
                 }
             ]);
@@ -65,11 +71,44 @@ class ChatService {
                 throw new BadRequestError("Session not found");
             }
 
+            const tripIds = session.messages
+                .map((msg: any) => msg.trip_id)
+                .filter((id: any) => id);
+                        
+            let schedulesMap = new Map();
+
+            if (tripIds.length > 0) {
+                const schedules = await scheduleModel.find({
+                    trip_id: { $in: tripIds }
+                }).lean();
+
+                schedules.forEach((schedule: any) => {
+                    const key = schedule.trip_id.toString();
+                    schedulesMap.set(key, schedule);
+                });
+            }
+            
+            const orderedMessages = session.messages.reverse();
+
+            const enrichedMessages = orderedMessages.map((msg: any) => {
+                let tripDetails = null;
+
+                if (msg.trip_id) {
+                    const key = msg.trip_id.toString();
+                    tripDetails = schedulesMap.get(key) || null;
+                }
+
+                return {
+                    ...msg,
+                    trip_details: tripDetails
+                };
+            });
+
             return new OkResponse("Get chat by session ID successfully", {
                 docs:
                 {
                     session_id: session.session_id,
-                    messages: session.messages
+                    messages: enrichedMessages,
                 },
                 pagination: {
                     totalDocs: session.totalMessages,
