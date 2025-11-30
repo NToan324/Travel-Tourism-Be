@@ -53,27 +53,10 @@ class ChatService {
             throw new BadRequestError("Invalid User ID format");
         }
 
-        const result = await chatSessionModel.aggregate([
-            {
-                $match: {
-                    session_id: sessionId,
-                    user_id: new mongoose.Types.ObjectId(userId)
-                }
-            },
-            {
-                $project: {
-                    session_id: 1,
-                    totalMessages: { $size: "$messages" },
-                    messages: {
-                        $slice: [
-                            { $reverseArray: "$messages" }
-                        ]
-                    }
-                }
-            }
-        ]);
-
-        const session = result[0];
+        const session = await chatSessionModel.findOne({
+            session_id: sessionId,
+            user_id: new mongoose.Types.ObjectId(userId)
+        }).lean();
 
         if (!session) {
             throw new BadRequestError("Session not found");
@@ -96,9 +79,7 @@ class ChatService {
             });
         }
     
-        const orderedMessages = session.messages.reverse();
-
-        const enrichedMessages = orderedMessages.map((msg: any) => {
+        const enrichedMessages = session.messages.map((msg: any) => {
             let tripDetails = null;
 
             if (msg.trip_id) {
