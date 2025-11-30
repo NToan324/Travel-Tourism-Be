@@ -1,5 +1,6 @@
 import mongoose, { type InferSchemaType, model } from "mongoose";
 import mongoosePagination from "mongoose-paginate-v2";
+
 import { tourismDbConnection } from "@/dbs/init.mongodb";
 
 const sectionSchema = new mongoose.Schema({

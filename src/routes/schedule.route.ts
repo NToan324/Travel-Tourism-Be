@@ -12,30 +12,32 @@ router.post(
   "/",
   authenticate,
   validationRequest(ScheduleValidation.create()),
-  asyncHandler(scheduleController.create)
+  asyncHandler(scheduleController.create),
 );
 
 router.get("/", authenticate, asyncHandler(scheduleController.getAll));
+
+router.get("/user", authenticate, asyncHandler(scheduleController.getByUserId));
 
 router.get(
   "/:id",
   authenticate,
   validationRequest(ScheduleValidation.idParam()),
-  asyncHandler(scheduleController.getById)
+  asyncHandler(scheduleController.getById),
 );
 
 router.put(
   "/:id",
   authenticate,
   validationRequest(ScheduleValidation.update()),
-  asyncHandler(scheduleController.update)
+  asyncHandler(scheduleController.update),
 );
 
 router.delete(
   "/:id",
   authenticate,
   validationRequest(ScheduleValidation.idParam()),
-  asyncHandler(scheduleController.delete)
+  asyncHandler(scheduleController.delete),
 );
 
 export default router;

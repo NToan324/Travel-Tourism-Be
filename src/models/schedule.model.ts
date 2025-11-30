@@ -1,5 +1,7 @@
 import mongoose, { type InferSchemaType, model } from "mongoose";
 import mongoosePaginate from "mongoose-paginate-v2";
+
+import { PLACE } from "@/constants";
 import { tourismDbConnection } from "@/dbs/init.mongodb";
 
 // ───────────────── Sub-schemas ─────────────────
@@ -21,11 +23,11 @@ const activitySchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ["Food", "Attraction", "Accommodation", "Festival", "Transport"],
+      enum: PLACE,
       required: true,
     },
   },
-  { _id: false }
+  { _id: false },
 );
 
 // Itinerary cho từng ngày
@@ -44,7 +46,7 @@ const itineraryDaySchema = new mongoose.Schema(
       default: [],
     },
   },
-  { _id: false }
+  { _id: false },
 );
 
 // Weather summary embed
@@ -63,7 +65,7 @@ const weatherSummarySchema = new mongoose.Schema(
       default: "",
     },
   },
-  { _id: false }
+  { _id: false },
 );
 
 // Accommodation embed
@@ -86,7 +88,7 @@ const accommodationSchema = new mongoose.Schema(
       default: "",
     },
   },
-  { _id: false }
+  { _id: false },
 );
 
 // ───────────────── Main Schedule schema ─────────────────
@@ -100,6 +102,10 @@ const scheduleSchema = new mongoose.Schema({
   trip_id: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
+  },
+
+  trip_cover_image: {
+    type: String,
   },
 
   // Match format bạn đưa
@@ -152,5 +158,9 @@ export type Schedule = InferSchemaType<typeof scheduleSchema> & {
   _id: mongoose.Types.ObjectId;
 };
 
-const scheduleModel = tourismDbConnection.model<Schedule>("Schedule", scheduleSchema, "schedules");
+const scheduleModel = tourismDbConnection.model<Schedule>(
+  "Schedule",
+  scheduleSchema,
+  "schedules",
+);
 export default scheduleModel;

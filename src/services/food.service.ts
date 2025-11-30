@@ -27,10 +27,11 @@ class FoodService {
   }
 
   async getAll({ page, limit }: { page: number; limit: number }) {
-    const foods = await foodModel
-      .find()
-      .populate("city_id", "name country")
-      .paginate({ page, limit });
+    const foods = await foodModel.find().paginate({
+      page,
+      limit,
+      populate: { path: "city_id", select: "name" },
+    });
 
     const data = foods.docs.map((food) => ({
       ...food.toObject(),
@@ -110,7 +111,7 @@ class FoodService {
         content: string;
         images?: string[];
       }>;
-    }
+    },
   ) {
     if (payload.city_id) {
       const city = await cityModel.findById(convertObjectId(payload.city_id));

@@ -29,7 +29,7 @@ class AccommodationService {
     const accommodation = await accommodationModel.create(payload);
     return new CreatedResponse(
       "Accommodation created successfully",
-      accommodation
+      accommodation,
     );
   }
 
@@ -82,7 +82,7 @@ class AccommodationService {
       price_range?: string;
       ratings?: number;
       image_urls?: string[];
-    }
+    },
   ) {
     if (payload.city_id) {
       const city = await cityModel.findById(convertObjectId(payload.city_id));
@@ -104,7 +104,7 @@ class AccommodationService {
 
   async delete(id: string) {
     const accommodation = await accommodationModel.findByIdAndDelete(
-      convertObjectId(id)
+      convertObjectId(id),
     );
     if (!accommodation) throw new NotFoundError("Accommodation not found");
     return new OkResponse("Accommodation deleted successfully", accommodation);

@@ -1,4 +1,5 @@
 import mongoose, { type InferSchemaType, model } from "mongoose";
+
 import { tourismDbConnection } from "@/dbs/init.mongodb";
 
 const weatherSummarySchema = new mongoose.Schema({
@@ -28,6 +29,6 @@ export type WeatherSummary = InferSchemaType<typeof weatherSummarySchema> & {
 const weatherSummaryModel = tourismDbConnection.model<WeatherSummary>(
   "WeatherSummary",
   weatherSummarySchema,
-  "weathersummaries"
+  "weathersummaries",
 );
 export default weatherSummaryModel;

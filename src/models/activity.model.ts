@@ -1,5 +1,6 @@
 import mongoose, { type InferSchemaType, model } from "mongoose";
 import mongoosePaginate from "mongoose-paginate-v2";
+
 import { tourismDbConnection } from "@/dbs/init.mongodb";
 
 const activitySchema = new mongoose.Schema({
@@ -33,5 +34,9 @@ export type Activity = InferSchemaType<typeof activitySchema> & {
   _id: mongoose.Types.ObjectId;
 };
 
-const activityModel = tourismDbConnection.model<Activity>("Activity", activitySchema, "activities");
+const activityModel = tourismDbConnection.model<Activity>(
+  "Activity",
+  activitySchema,
+  "activities",
+);
 export default activityModel;

@@ -12,7 +12,8 @@ router.get(
   asyncHandler(chatController.getChatHistory)
 );
 
-router.get("/:sessionId",
+router.get(
+  "/:sessionId",
   authenticate,
   asyncHandler(chatController.getChatBySessionId)
 );

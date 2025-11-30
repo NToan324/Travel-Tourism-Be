@@ -19,7 +19,7 @@ const dev: Config = {
     host: process.env.DEV_APP_HOST ?? "localhost",
   },
   db: {
-    chatURI: process.env.DEV_MONGO_DB_CHAT_URI!,
+    chatURI: process.env.DEV_MONGO_DB_CHAT_URI || "",
     connectionString: process.env.DEV_MONGO_DB_CONNECTION_STRING!,
   },
 };
@@ -30,7 +30,7 @@ const prod: Config = {
     host: process.env.PROD_APP_HOST ?? "localhost",
   },
   db: {
-    chatURI: process.env.PROD_MONGO_DB_CHAT_URI!,
+    chatURI: process.env.PROD_MONGO_DB_CHAT_URI || "",
     connectionString: process.env.PROD_MONGO_DB_CONNECTION_STRING!,
   },
 };

@@ -12,7 +12,7 @@ router.post(
   "/",
   authenticate,
   validationRequest(AccommodationValidation.create()),
-  asyncHandler(accommodationController.create)
+  asyncHandler(accommodationController.create),
 );
 
 router.get("/", asyncHandler(accommodationController.getAll));
@@ -20,21 +20,21 @@ router.get("/", asyncHandler(accommodationController.getAll));
 router.get(
   "/:id",
   validationRequest(AccommodationValidation.idParam()),
-  asyncHandler(accommodationController.getById)
+  asyncHandler(accommodationController.getById),
 );
 
 router.put(
   "/:id",
   authenticate,
   validationRequest(AccommodationValidation.update()),
-  asyncHandler(accommodationController.update)
+  asyncHandler(accommodationController.update),
 );
 
 router.delete(
   "/:id",
   authenticate,
   validationRequest(AccommodationValidation.idParam()),
-  asyncHandler(accommodationController.delete)
+  asyncHandler(accommodationController.delete),
 );
 
 export default router;

@@ -10,3 +10,13 @@ export enum ROLE {
   USER = "user",
   ADMIN = "admin",
 }
+
+export enum PLACE {
+  ATTRACTION = "Attraction",
+  FOOD = "Food",
+  FESTIVAL = "Festival",
+  ACCOMMODATION = "Accommodation",
+  GENERAL = "General",
+  TIPS = "Tips",
+  TRANSPORT = "Transport",
+}

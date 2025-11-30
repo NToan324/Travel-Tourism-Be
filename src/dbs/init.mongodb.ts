@@ -1,7 +1,5 @@
 // import mongoose from "mongoose";
 
-// import config from "@/configs/app.config";
-
 // type DB = "mongo" | "mysql";
 
 // class Database {
@@ -43,9 +41,9 @@
 // const instanceMongodb = Database.getInstance();
 // export default instanceMongodb;
 
-
 // init.mongodb.ts
 import mongoose from "mongoose";
+
 import config from "@/configs/app.config";
 
 function createConnection(uri: string, name: string) {
@@ -66,4 +64,7 @@ function createConnection(uri: string, name: string) {
 export const chatDbConnection = createConnection(config.db.chatURI, "Chat");
 
 // Tạo connection cho Tourism DB (chứa attractions, cities...)
-export const tourismDbConnection = createConnection(config.db.connectionString, "Tourism");
+export const tourismDbConnection = createConnection(
+  config.db.connectionString,
+  "Tourism",
+);

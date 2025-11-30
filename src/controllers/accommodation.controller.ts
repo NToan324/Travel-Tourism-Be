@@ -25,7 +25,7 @@ class AccommodationController {
         price_range,
         ratings,
         image_urls,
-      })
+      }),
     );
   }
 
@@ -36,7 +36,7 @@ class AccommodationController {
       await accommodationService.getAll({
         page: Number(page),
         limit: Number(limit),
-      })
+      }),
     );
   }
 
@@ -68,7 +68,7 @@ class AccommodationController {
         price_range,
         ratings,
         image_urls,
-      })
+      }),
     );
   }
 
