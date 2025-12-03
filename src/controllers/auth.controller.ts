@@ -8,6 +8,11 @@ class AuthController {
     res.status(200).send(await authService.getMe(id));
   }
 
+  async googleLogin(req: Request, res: Response) {
+    const { token } = req.body;
+    res.send(await authService.googleLogin(token as string));
+  }
+
   async signUp(req: Request, res: Response) {
     const { fullName, email, password } = req.body;
     res

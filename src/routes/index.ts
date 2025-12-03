@@ -9,8 +9,10 @@ import foodRoute from "@/routes/food.route";
 import placeRoute from "@/routes/place.route";
 import scheduleRoute from "@/routes/schedule.route";
 import uploadRoute from "@/routes/upload.route";
+import userRoute from "@/routes/user.route";
 
 const router = express.Router();
+router.use("/users", userRoute);
 router.use("/auth", authRoute);
 router.use("/upload", uploadRoute);
 router.use("/cities", cityRoute);

@@ -1,9 +1,11 @@
+import axios from "axios";
 import bycrypt from "bcryptjs";
 import jwt, { type JwtPayload } from "jsonwebtoken";
 import { type StringValue } from "ms";
 
-import { mailTemplate } from "@/configs/mailer.config";
+import { mailTemplate, sendGoogleSuccessEmail } from "@/configs/mailer.config";
 import redisClient from "@/configs/redis.config";
+import { AUTH_PROVIDER, ROLE } from "@/constants";
 import { BadRequestError } from "@/core/error.response";
 import { CreatedResponse, OkResponse } from "@/core/success.response";
 import userModel from "@/models/user.model";
@@ -38,6 +40,96 @@ class AuthService {
     return new OkResponse("Get user successfully", user);
   }
 
+  async googleLogin(token: string) {
+    if (!token) {
+      throw new BadRequestError("Google Access Token is required");
+    }
+    let email, name, picture, sub;
+
+    try {
+      const googleResponse = await axios.get(
+        "https://www.googleapis.com/oauth2/v3/userinfo",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const payload = googleResponse.data;
+
+      email = payload.email;
+      name = payload.name;
+      picture = payload.picture;
+      sub = payload.sub;
+    } catch (error) {
+      throw new BadRequestError("Invalid Google Access Token");
+    }
+
+    if (!email) {
+      throw new BadRequestError("Google token does not contain email");
+    }
+
+    let foundUser = await userModel.findOne({
+      $or: [{ email: email }, { googleId: sub }],
+    });
+
+    if (!foundUser) {
+      const newUser = await userModel.create({
+        fullName: name || "Traveler",
+        email: email,
+        address: "",
+        avatar: picture || "",
+        role: ROLE.USER,
+        authProvider: AUTH_PROVIDER.GOOGLE,
+        googleId: sub,
+      });
+
+      foundUser = newUser;
+
+      await sendGoogleSuccessEmail({
+        to: email,
+        name: name || "Traveler",
+        loginLink: "http://localhost:3000/signin",
+      });
+    }
+
+    if (foundUser.avatar === "" && picture) {
+      foundUser.avatar = picture;
+      await foundUser.save();
+    }
+
+    // Tạo Access Token
+    const accessToken = generateJwt(
+      {
+        email: foundUser.email,
+        id: foundUser._id.toString(),
+        fullName: foundUser.fullName,
+        role: foundUser.role,
+      },
+      "2h"
+    );
+
+    const refreshToken = generateJwt(
+      {
+        email: foundUser.email,
+        id: foundUser._id.toString(),
+        fullName: foundUser.fullName,
+        role: foundUser.role,
+      },
+      "7d"
+    );
+
+    const { password, ...userData } = foundUser.toObject();
+    return new OkResponse("Login successfully", {
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+      user: {
+        ...userData,
+      },
+    });
+  }
+
   async signUp(payload: { fullName: string; email: string; password: string }) {
     const existingUser = await userModel.findOne({
       email: payload.email,
@@ -54,11 +146,16 @@ class AuthService {
 
     const { password, ...userData } = response.toObject();
 
-    if (response) {
-      return new CreatedResponse("Create user successfully", { ...userData });
+    if (!response) {
+      throw new BadRequestError("Failed to create user");
     }
+    await sendGoogleSuccessEmail({
+      to: payload.email,
+      name: payload.fullName || "Traveler",
+      loginLink: "http://localhost:3000/signin",
+    });
 
-    throw new BadRequestError("Failed to create user");
+    return new CreatedResponse("Create user successfully", { ...userData });
   }
 
   async login(payload: { email: string; password: string }) {

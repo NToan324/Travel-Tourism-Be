@@ -20,3 +20,8 @@ export enum PLACE {
   TIPS = "Tips",
   TRANSPORT = "Transport",
 }
+
+export const AUTH_PROVIDER = {
+  EMAIL: "email",
+  GOOGLE: "google",
+};

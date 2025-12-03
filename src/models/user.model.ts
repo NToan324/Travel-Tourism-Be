@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs";
 import mongoose, { type InferSchemaType, model } from "mongoose";
 
-import { ROLE } from "@/constants";
+import { AUTH_PROVIDER, ROLE } from "@/constants";
 import { tourismDbConnection } from "@/dbs/init.mongodb";
 
 const userSchema = new mongoose.Schema({
@@ -11,7 +11,7 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: true,
+    default: null,
   },
   address: {
     type: String,
@@ -25,6 +25,14 @@ const userSchema = new mongoose.Schema({
   avatar: {
     type: String,
     default: "",
+  },
+  googleId: {
+    type: String,
+    default: null,
+  },
+  authProvider: {
+    type: String,
+    default: AUTH_PROVIDER.EMAIL,
   },
   role: {
     type: String,

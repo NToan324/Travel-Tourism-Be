@@ -37,6 +37,6 @@ export type Activity = InferSchemaType<typeof activitySchema> & {
 const activityModel = tourismDbConnection.model<Activity>(
   "Activity",
   activitySchema,
-  "activities",
+  "activities"
 );
 export default activityModel;

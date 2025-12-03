@@ -11,6 +11,12 @@ const router = Router();
 router.get("/me", authenticate, asyncHandler(authController.getMe));
 
 router.post(
+  "/google-login",
+  validationRequest(AuthValidation.googleLoginSchema()),
+  asyncHandler(authController.googleLogin)
+);
+
+router.post(
   "/login",
   validationRequest(AuthValidation.login()),
   asyncHandler(authController.login)
