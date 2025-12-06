@@ -39,6 +39,35 @@ const userSchema = new mongoose.Schema({
     enum: ROLE,
     default: ROLE.USER,
   },
+  bio: {
+    type: String,
+    default: "",
+  },
+  googleCalendar: {
+    email: {
+      type: String,
+      default: "",
+    },
+    accessToken: {
+      type: String,
+      default: "",
+    },
+    refreshToken: {
+      type: String,
+      default: "",
+    },
+    scope: {
+      type: String,
+      default: "",
+    },
+    tokenType: {
+      type: String,
+      default: "",
+    },
+    expiryDate: {
+      type: Number,
+    },
+  },
 });
 
 export type User = InferSchemaType<typeof userSchema> & {

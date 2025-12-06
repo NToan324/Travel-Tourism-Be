@@ -1,11 +1,25 @@
 import type { Request, Response } from "express";
 
+import { oauth2Client, scopes } from "@/configs/googleCalendar.config";
+import { OkResponse } from "@/core/success.response";
 import authService from "@/services/auth.service";
 
 class AuthController {
   async getMe(req: Request, res: Response) {
     const { id } = req.user!;
     res.status(200).send(await authService.getMe(id));
+  }
+
+  async googleCalendarAuthenticate(req: Request, res: Response) {
+    const { id: userId } = req.user!;
+    res.status(200).send(await authService.googleCalendarAuthenticate(userId));
+  }
+
+  async googleCalendarRedirect(req: Request, res: Response) {
+    const userId = req.query.state as string;
+    const { tokens } = await oauth2Client.getToken(req.query.code as string);
+    await authService.googleCalendarSaveToken(userId, tokens);
+    res.redirect(`http://localhost:3000/plan`);
   }
 
   async googleLogin(req: Request, res: Response) {
@@ -52,6 +66,20 @@ class AuthController {
     res
       .status(200)
       .send(await authService.resetPassword({ resetToken, password }));
+  }
+
+  async changePassword(req: Request, res: Response) {
+    const { oldPassword, newPassword } = req.body;
+    const { id } = req.user!;
+    res
+      .status(200)
+      .send(
+        await authService.changePassword({
+          oldPassword,
+          newPassword,
+          userId: id,
+        })
+      );
   }
 }
 

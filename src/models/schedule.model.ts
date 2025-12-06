@@ -27,7 +27,7 @@ const activitySchema = new mongoose.Schema(
       required: true,
     },
   },
-  { _id: false },
+  { _id: false }
 );
 
 // Itinerary cho từng ngày
@@ -46,7 +46,7 @@ const itineraryDaySchema = new mongoose.Schema(
       default: [],
     },
   },
-  { _id: false },
+  { _id: false }
 );
 
 // Weather summary embed
@@ -65,7 +65,7 @@ const weatherSummarySchema = new mongoose.Schema(
       default: "",
     },
   },
-  { _id: false },
+  { _id: false }
 );
 
 // Accommodation embed
@@ -88,7 +88,7 @@ const accommodationSchema = new mongoose.Schema(
       default: "",
     },
   },
-  { _id: false },
+  { _id: false }
 );
 
 // ───────────────── Main Schedule schema ─────────────────
@@ -150,6 +150,10 @@ const scheduleSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  is_schedule_completed: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 scheduleSchema.plugin(mongoosePaginate);
@@ -161,6 +165,23 @@ export type Schedule = InferSchemaType<typeof scheduleSchema> & {
 const scheduleModel = tourismDbConnection.model<Schedule>(
   "Schedule",
   scheduleSchema,
-  "schedules",
+  "schedules"
 );
+
+export interface IGoogleCalendarEvent {
+  summary: string;
+  location: string;
+  description: string;
+
+  start: {
+    dateTime: string;
+    timeZone: string;
+  };
+
+  end: {
+    dateTime: string;
+    timeZone: string;
+  };
+}
+
 export default scheduleModel;

@@ -38,7 +38,6 @@ export class ScheduleValidation {
   static create() {
     return {
       body: z.object({
-        user_id: z.string().nonempty("User ID is required"),
         trip_id: z.string().nonempty("Trip ID is required"),
         trip_cover_image: z.string().optional(),
 
@@ -89,6 +88,36 @@ export class ScheduleValidation {
       params: z.object({
         id: z.string().nonempty("Schedule ID is required"),
       }),
+    };
+  }
+
+  static CalendarEventSchema = z.object({
+    summary: z.string().nonempty("Summary is required"),
+    location: z.string().nonempty("Location is required"),
+    description: z.string().nonempty("Description is required"),
+
+    start: z.object({
+      dateTime: z.string().datetime({
+        offset: true,
+        message: "start.dateTime must be ISO datetime with timezone (Z)",
+      }),
+      timeZone: z.string().nonempty("start.timeZone is required"),
+    }),
+
+    end: z.object({
+      dateTime: z.string().datetime({
+        offset: true,
+        message: "end.dateTime must be ISO datetime with timezone (Z)",
+      }),
+      timeZone: z.string().nonempty("end.timeZone is required"),
+    }),
+  });
+
+  static createEvents() {
+    return {
+      body: z
+        .array(this.CalendarEventSchema)
+        .nonempty("At least one event is required"),
     };
   }
 }

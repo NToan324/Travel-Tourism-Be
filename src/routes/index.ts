@@ -7,6 +7,7 @@ import cityRoute from "@/routes/city.route";
 import festivalRoute from "@/routes/festival.route";
 import foodRoute from "@/routes/food.route";
 import placeRoute from "@/routes/place.route";
+import planRoute from "@/routes/plan.route";
 import scheduleRoute from "@/routes/schedule.route";
 import uploadRoute from "@/routes/upload.route";
 import userRoute from "@/routes/user.route";
@@ -21,6 +22,7 @@ router.use("/foods", foodRoute);
 router.use("/accommodations", accommodationRoute);
 router.use("/festivals", festivalRoute);
 router.use("/chat", chatRoute);
+router.use("/plans", planRoute);
 router.use("/places", placeRoute);
 
 export default router;

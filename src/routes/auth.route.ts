@@ -10,6 +10,17 @@ const router = Router();
 
 router.get("/me", authenticate, asyncHandler(authController.getMe));
 
+router.get(
+  "/google-calendar/authenticate",
+  authenticate,
+  asyncHandler(authController.googleCalendarAuthenticate)
+);
+
+router.get(
+  "/google-calendar/redirect",
+  asyncHandler(authController.googleCalendarRedirect)
+);
+
 router.post(
   "/google-login",
   validationRequest(AuthValidation.googleLoginSchema()),
@@ -44,6 +55,13 @@ router.post(
   "/reset-password",
   validationRequest(AuthValidation.resetPassword()),
   asyncHandler(authController.resetPassword)
+);
+
+router.put(
+  "/change-password",
+  authenticate,
+  validationRequest(AuthValidation.changePassword()),
+  asyncHandler(authController.changePassword)
 );
 
 router.post(

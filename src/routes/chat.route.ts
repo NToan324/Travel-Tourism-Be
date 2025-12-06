@@ -18,4 +18,10 @@ router.get(
   asyncHandler(chatController.getChatBySessionId)
 );
 
+router.delete(
+  "/:sessionId",
+  authenticate,
+  asyncHandler(chatController.deleteChatSessionById)
+);
+
 export default router;

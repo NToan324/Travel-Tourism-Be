@@ -1,5 +1,6 @@
 import type { Request, Response } from "express";
 
+import { type IGoogleCalendarEvent } from "@/models/schedule.model";
 import scheduleService from "@/services/schedule.service";
 
 class ScheduleController {
@@ -31,7 +32,7 @@ class ScheduleController {
         trip_cover_image,
         weather_summary,
         itinerary,
-      }),
+      })
     );
   }
 
@@ -42,7 +43,7 @@ class ScheduleController {
       await scheduleService.getAll({
         page: Number(page),
         limit: Number(limit),
-      }),
+      })
     );
   }
 
@@ -59,7 +60,7 @@ class ScheduleController {
         from_date:
           typeof from_date === "string" ? new Date(from_date) : undefined,
         to_date: typeof to_date === "string" ? new Date(to_date) : undefined,
-      }),
+      })
     );
   }
 
@@ -92,8 +93,19 @@ class ScheduleController {
         trip_cover_image,
         accommodation,
         itinerary,
-      }),
+      })
     );
+  }
+
+  async createEventGoogleCalendar(req: Request, res: Response) {
+    const { id: userId } = req.user!;
+    const { id } = req.params;
+    const events: IGoogleCalendarEvent[] = req.body;
+    res
+      .status(201)
+      .send(
+        await scheduleService.createEventGoogleCalendar(id, userId, events)
+      );
   }
 
   async delete(req: Request, res: Response) {

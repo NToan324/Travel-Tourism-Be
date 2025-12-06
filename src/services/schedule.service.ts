@@ -1,8 +1,15 @@
 import { addDays } from "date-fns";
 
+import {
+  calendar,
+  getOAuthClientFromUser,
+} from "@/configs/googleCalendar.config";
+import { sendGoogleAddScheduleEmail } from "@/configs/mailer.config";
 import { BadRequestError, NotFoundError } from "@/core/error.response";
 import { CreatedResponse, OkResponse } from "@/core/success.response";
-import scheduleModel from "@/models/schedule.model";
+import scheduleModel, {
+  type IGoogleCalendarEvent,
+} from "@/models/schedule.model";
 import userModel from "@/models/user.model";
 import { convertObjectId } from "@/utils/convertObjectId";
 
@@ -96,14 +103,14 @@ class ScheduleService {
         itinerary: {
           $elemMatch: { title: { $regex: search || "", $options: "i" } },
         },
-        ...(from_date && to_date
-          ? {
-              created_at: {
-                $gte: new Date(from_date),
-                $lte: addDays(new Date(to_date), 1),
-              },
-            }
-          : {}),
+        ...(from_date && to_date ?
+          {
+            created_at: {
+              $gte: new Date(from_date),
+              $lte: addDays(new Date(to_date), 1),
+            },
+          }
+        : {}),
       })
       .paginate({
         page,
@@ -163,7 +170,7 @@ class ScheduleService {
           type: string;
         }[];
       }[];
-    }>,
+    }>
   ) {
     const schedule = await scheduleModel.findById(convertObjectId(id));
     if (!schedule) throw new NotFoundError("Schedule not found");
@@ -178,6 +185,76 @@ class ScheduleService {
     if (!schedule) throw new NotFoundError("Schedule not found");
 
     return new OkResponse("Schedule deleted successfully");
+  }
+
+  async createEventGoogleCalendar(
+    schedule_id: string,
+    userId: string,
+    events: IGoogleCalendarEvent[]
+  ) {
+    const user = await userModel.findById(userId);
+
+    if (!user) throw new BadRequestError("User not found");
+
+    if (!user.googleCalendar?.accessToken) {
+      throw new BadRequestError(
+        "Không tìm thấy token Google Calendar. Vui lòng xác thực lại."
+      );
+    }
+
+    if (
+      user.googleCalendar.expiryDate &&
+      user.googleCalendar.expiryDate < Date.now()
+    ) {
+      throw new BadRequestError(
+        "Token truy cập Google Calendar đã hết hạn. Vui lòng xác thực lại."
+      );
+    }
+
+    const schedule = await scheduleModel.findById(convertObjectId(schedule_id));
+    if (!schedule) {
+      throw new NotFoundError("Không tìm thấy lịch trình");
+    }
+
+    if (schedule.is_schedule_completed) {
+      throw new BadRequestError("Lịch trình đã được hoàn thành.");
+    }
+
+    const oauth2ClientUser = getOAuthClientFromUser(user);
+
+    const result = await Promise.all(
+      events.map(async (event) => {
+        await calendar.events.insert({
+          calendarId: "primary",
+          requestBody: event,
+          auth: oauth2ClientUser,
+        });
+      })
+    );
+
+    if (!result) {
+      throw new BadRequestError("Tạo sự kiện trong Google Calendar thất bại");
+    }
+
+    await scheduleModel.updateMany(
+      { _id: convertObjectId(schedule_id) },
+      { is_schedule_completed: true }
+    );
+
+    await sendGoogleAddScheduleEmail({
+      to: user.googleCalendar.email,
+      name: user.fullName,
+      calendarLink: "https://calendar.google.com",
+      tripTitle: schedule.location,
+      startDate: schedule.start_date.toLocaleDateString("vi-VN"),
+      endDate: schedule.end_date.toLocaleDateString("vi-VN"),
+      totalEvents: events.length,
+    });
+
+    return new CreatedResponse(
+      "Event created in Google Calendar successfully",
+      result
+    );
   }
 }
 
