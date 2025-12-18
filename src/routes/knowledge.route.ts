@@ -4,9 +4,9 @@ import knowledgeController from "@/controllers/knowledge.controller";
 import { asyncHandler } from "@/middlewares/asyncHandler.middleware";
 import { authenticate } from "@/middlewares/authenticate.middleware";
 import { validationRequest } from "@/middlewares/validationRequest.middleware";
+import verifyRole from "@/middlewares/verifyRoles.middleware";
 // Giả định bạn sẽ tạo file validation tương ứng (tôi có code gợi ý bên dưới)
 import { KnowledgeValidation } from "@/validations/knowledge.validation";
-import verifyRole from "@/middlewares/verifyRoles.middleware";
 
 const router = Router();
 

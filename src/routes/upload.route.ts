@@ -12,14 +12,14 @@ router.post(
   "/multiple",
   authenticate,
   uploadDisk.array("files", 10),
-  asyncHandler(uploadController.uploadMultiImages),
+  asyncHandler(uploadController.uploadMultiImages)
 );
 
 router.post(
   "/",
   authenticate,
   uploadDisk.single("file"),
-  asyncHandler(uploadController.uploadImage),
+  asyncHandler(uploadController.uploadImage)
 );
 
 router.post(
@@ -27,7 +27,7 @@ router.post(
   authenticate,
   verifyRole(['admin']),
   uploadDisk.single("file"),
-  asyncHandler(uploadController.uploadDocument),
+  asyncHandler(uploadController.uploadDocument)
 );
 
 export default router;

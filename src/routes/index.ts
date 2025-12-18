@@ -6,12 +6,12 @@ import chatRoute from "@/routes/chat.route";
 import cityRoute from "@/routes/city.route";
 import festivalRoute from "@/routes/festival.route";
 import foodRoute from "@/routes/food.route";
+import knowledgeRoute from "@/routes/knowledge.route";
 import placeRoute from "@/routes/place.route";
 import planRoute from "@/routes/plan.route";
 import scheduleRoute from "@/routes/schedule.route";
 import uploadRoute from "@/routes/upload.route";
 import userRoute from "@/routes/user.route";
-import knowledgeRoute from "./knowledge.route";
 
 const router = express.Router();
 router.use("/users", userRoute);
