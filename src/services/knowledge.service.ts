@@ -17,7 +17,6 @@ class KnowledgeService {
         name?: string;
         mime_type?: string;
         size?: number;
-        type?: 'excel' | 'document';
         topic?: string;
         location?: string;
         source?: string;
@@ -36,14 +35,42 @@ class KnowledgeService {
         if (payload.name !== undefined) knowledge.name = payload.name;
         if (payload.mime_type !== undefined) knowledge.mime_type = payload.mime_type;
         if (payload.size !== undefined) knowledge.size = payload.size;
-        if (payload.type !== undefined) knowledge.type = payload.type;
-        
+            
         if (payload.topic !== undefined || payload.location !== undefined || payload.source !== undefined) {
             knowledge.metadata = {
                 topic: payload.topic !== undefined ? payload.topic : (knowledge.metadata?.topic || ''),
                 location: payload.location !== undefined ? payload.location : (knowledge.metadata?.location || ''),
                 source: payload.source !== undefined ? payload.source : (knowledge.metadata?.source || '')
             };
+        }
+
+        const ALLOWED_MIMES = [
+            'text/plain',                                                                // .txt
+            'application/pdf',                                                           // .pdf
+            'application/msword',                                                        // .doc
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',   // .docx
+            'application/vnd.ms-excel',                                                  // .xls
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',         // .xlsx
+            'text/csv'                                                                   // .csv
+        ];
+
+        if (payload.mime_type && !ALLOWED_MIMES.includes(payload.mime_type)) {
+            throw new BadRequestError("Định dạng file không hỗ trợ. Chỉ chấp nhận .txt, .pdf, .docx, .xlsx");
+        }
+
+        if (payload.mime_type) {
+            let type: 'excel' | 'document';
+
+            if (payload.mime_type === 'application/vnd.ms-excel' || payload.mime_type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+                // Loại file Excel
+                type = 'excel';
+            }
+            else {
+                // Loại file Document
+                type = 'document';
+            }
+
+            knowledge.type = type;
         }
 
         await knowledge.save();
@@ -57,16 +84,40 @@ class KnowledgeService {
         name: string;
         mime_type: string;
         size: number;
-        type: 'excel' | 'document';
         topic?: string;
         location?: string;
         source?: string;
     }) {
+
+        const ALLOWED_MIMES = [
+            'text/plain',                                                                // .txt
+            'application/pdf',                                                           // .pdf
+            'application/msword',                                                        // .doc
+            'application/vnd.openxmlformats-officedocument.wordprocessingml.document',   // .docx
+            'application/vnd.ms-excel',                                                  // .xls
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',         // .xlsx
+            'text/csv'                                                                   // .csv
+        ];
+
         const fileId = payload.file_name + '_' + uuidv4();
+
+        if (!ALLOWED_MIMES.includes(payload.mime_type)) {
+            throw new BadRequestError("Định dạng file không hỗ trợ. Chỉ chấp nhận .txt, .pdf, .docx, .xlsx");
+        }
+
+        let type: 'excel' | 'document';
+
+        if(payload.mime_type === 'application/vnd.ms-excel' || payload.mime_type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+            // Loại file Excel
+            type = 'excel';
+        } else {
+            // Loại file Document
+            type = 'document';
+        }
 
         // Xử lý metadata tùy theo loại file
         let metadata = {};
-        if (payload.type == 'document') {
+        if (type == 'document') {
             metadata = {
                 topic: payload.topic,
                 location: payload.location
@@ -80,7 +131,7 @@ class KnowledgeService {
             url: payload.url,
             mime_type: payload.mime_type,
             size: payload.size,
-            type: payload.type,
+            type: type,
             metadata: metadata,
             status: 'uploaded',
         });

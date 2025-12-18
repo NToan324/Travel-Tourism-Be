@@ -10,9 +10,6 @@ export class KnowledgeValidation {
                 name: z.string().nonempty("Name is required"),
                 mime_type: z.string().nonempty("Mime type is required"),
                 size: z.number().positive("Size must be a positive number"),
-                type: z.enum(["excel", "document"], {
-                    errorMap: () => ({ message: "Type must be 'excel' or 'document'" }),
-                }),
                 topic: z.string().nullable().optional(),
                 location: z.string().nullable().optional(),
                 source: z.string().nullable().optional(),
@@ -32,7 +29,6 @@ export class KnowledgeValidation {
                 name: z.string().optional(),
                 mime_type: z.string().optional(),
                 size: z.number().positive().optional(),
-                type: z.enum(["excel", "document"]).optional(),
                 topic: z.string().nullable().optional(),
                 location: z.string().nullable().optional(),
                 source: z.string().nullable().optional(),
