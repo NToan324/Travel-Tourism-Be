@@ -126,7 +126,7 @@ class KnowledgeService {
 
         const savedKnowledge = await knowledgeModel.create({
             file_id: fileId,
-            file_name: payload.name,
+            file_name: payload.file_name,
             name: payload.name,
             url: payload.url,
             mime_type: payload.mime_type,
@@ -155,7 +155,7 @@ class KnowledgeService {
 
             const form = new FormData();
 
-            form.append('file', fileStreamResponse.data, knowledge.name);
+            form.append('file', fileStreamResponse.data);
 
             let pythonEndpoint = '';
 
