@@ -14,6 +14,11 @@ class UploadController {
     const uploaded = await uploadService.uploadMultiImages(files);
     res.status(200).send(uploaded);
   }
+
+  async uploadDocument(req: Request, res: Response) {
+    const file = req.file as Express.Multer.File;
+    res.status(200).send(await uploadService.uploadDocument(file));
+  }
 }
 const uploadController = new UploadController();
 export default uploadController;

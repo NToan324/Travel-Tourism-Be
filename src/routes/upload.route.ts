@@ -18,4 +18,10 @@ router.post(
   asyncHandler(uploadController.uploadImage),
 );
 
+router.post(
+  "/document",
+  uploadDisk.single("file"),
+  asyncHandler(uploadController.uploadDocument),
+);
+
 export default router;

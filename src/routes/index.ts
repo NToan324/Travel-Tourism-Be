@@ -11,6 +11,7 @@ import planRoute from "@/routes/plan.route";
 import scheduleRoute from "@/routes/schedule.route";
 import uploadRoute from "@/routes/upload.route";
 import userRoute from "@/routes/user.route";
+import knowledgeRoute from "./knowledge.route";
 
 const router = express.Router();
 router.use("/users", userRoute);
@@ -24,5 +25,6 @@ router.use("/festivals", festivalRoute);
 router.use("/chat", chatRoute);
 router.use("/plans", planRoute);
 router.use("/places", placeRoute);
+router.use("/admin/knowledge", knowledgeRoute);
 
 export default router;
