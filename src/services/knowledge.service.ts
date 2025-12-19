@@ -178,6 +178,10 @@ class KnowledgeService {
       throw new NotFoundError("Knowledge not found");
     }
 
+    if (knowledge.status === "synced") {
+      throw new BadRequestError("Knowledge is already synchronized");
+    }
+
     knowledge.status = "syncing";
     await knowledge.save();
     try {
