@@ -5,12 +5,14 @@ import { asyncHandler } from "@/middlewares/asyncHandler.middleware";
 import { authenticate } from "@/middlewares/authenticate.middleware";
 import { validationRequest } from "@/middlewares/validationRequest.middleware";
 import { PlaceValidation } from "@/validations/attraction.validation";
+import verifyRole from "@/middlewares/verifyRoles.middleware";
 
 const router = Router();
 
 router.post(
   "/",
   authenticate,
+  verifyRole(['admin']),
   validationRequest(PlaceValidation.create()),
   asyncHandler(placeController.create),
 );
@@ -34,6 +36,7 @@ router.get(
 router.put(
   "/:id",
   authenticate,
+  verifyRole(['admin']),
   validationRequest(PlaceValidation.update()),
   asyncHandler(placeController.update),
 );
@@ -41,6 +44,7 @@ router.put(
 router.delete(
   "/:id",
   authenticate,
+  verifyRole(['admin']),
   validationRequest(PlaceValidation.idParam()),
   asyncHandler(placeController.delete),
 );

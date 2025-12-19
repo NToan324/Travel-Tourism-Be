@@ -6,6 +6,7 @@ import { authenticate } from "@/middlewares/authenticate.middleware";
 import { validationRequest } from "@/middlewares/validationRequest.middleware";
 // Giả định bạn sẽ tạo file validation tương ứng (tôi có code gợi ý bên dưới)
 import { KnowledgeValidation } from "@/validations/knowledge.validation";
+import verifyRole from "@/middlewares/verifyRoles.middleware";
 
 const router = Router();
 
@@ -13,6 +14,7 @@ const router = Router();
 router.post(
     "/",
     authenticate,
+    verifyRole(['admin']),
     validationRequest(KnowledgeValidation.create()),
     asyncHandler(knowledgeController.create),
 );
@@ -20,12 +22,14 @@ router.post(
 //
 router.get("/", 
     authenticate,
+    verifyRole(['admin']),
     asyncHandler(knowledgeController.getAll));
 
 // 3. Lấy chi tiết
 router.get(
     "/:id",
     authenticate,
+    verifyRole(['admin']),
     validationRequest(KnowledgeValidation.idParam()),
     asyncHandler(knowledgeController.getById),
 );
@@ -34,6 +38,7 @@ router.get(
 router.put(
     "/:id",
     authenticate,
+    verifyRole(['admin']),
     validationRequest(KnowledgeValidation.update()),
     asyncHandler(knowledgeController.update),
 );
@@ -42,6 +47,7 @@ router.put(
 router.delete(
     "/:id",
     authenticate,
+    verifyRole(['admin']),
     validationRequest(KnowledgeValidation.idParam()),
     asyncHandler(knowledgeController.delete),
 );
@@ -53,6 +59,7 @@ router.delete(
 router.post(
     "/:id/sync",
     authenticate,
+    verifyRole(['admin']),
     validationRequest(KnowledgeValidation.idParam()),
     asyncHandler(knowledgeController.synchronize),
 );
@@ -62,6 +69,7 @@ router.post(
 router.post(
     "/:id/desync",
     authenticate,
+    verifyRole(['admin']),
     validationRequest(KnowledgeValidation.idParam()),
     asyncHandler(knowledgeController.desynchronize),
 );

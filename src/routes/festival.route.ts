@@ -5,12 +5,14 @@ import { asyncHandler } from "@/middlewares/asyncHandler.middleware";
 import { authenticate } from "@/middlewares/authenticate.middleware";
 import { validationRequest } from "@/middlewares/validationRequest.middleware";
 import { FestivalValidation } from "@/validations/festival.validation";
+import verifyRole from "@/middlewares/verifyRoles.middleware";
 
 const router = Router();
 
 router.post(
   "/",
   authenticate,
+  verifyRole(['admin']),
   validationRequest(FestivalValidation.create()),
   asyncHandler(festivalController.create),
 );
@@ -26,6 +28,7 @@ router.get(
 router.put(
   "/:id",
   authenticate,
+  verifyRole(['admin']),
   validationRequest(FestivalValidation.update()),
   asyncHandler(festivalController.update),
 );
@@ -33,6 +36,7 @@ router.put(
 router.delete(
   "/:id",
   authenticate,
+  verifyRole(['admin']),
   validationRequest(FestivalValidation.idParam()),
   asyncHandler(festivalController.delete),
 );

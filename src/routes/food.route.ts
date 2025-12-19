@@ -5,12 +5,14 @@ import { asyncHandler } from "@/middlewares/asyncHandler.middleware";
 import { authenticate } from "@/middlewares/authenticate.middleware";
 import { validationRequest } from "@/middlewares/validationRequest.middleware";
 import { FoodValidation } from "@/validations/food.validation";
+import verifyRole from "@/middlewares/verifyRoles.middleware";
 
 const router = Router();
 
 router.post(
   "/",
   authenticate,
+  verifyRole(['admin']),
   validationRequest(FoodValidation.create()),
   asyncHandler(foodController.create),
 );
@@ -32,6 +34,7 @@ router.get(
 router.put(
   "/:id",
   authenticate,
+  verifyRole(['admin']),
   validationRequest(FoodValidation.update()),
   asyncHandler(foodController.update),
 );
@@ -39,6 +42,7 @@ router.put(
 router.delete(
   "/:id",
   authenticate,
+  verifyRole(['admin']),
   validationRequest(FoodValidation.idParam()),
   asyncHandler(foodController.delete),
 );
