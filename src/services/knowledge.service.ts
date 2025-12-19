@@ -189,7 +189,7 @@ class KnowledgeService {
             knowledge.status = 'synced';
             await knowledge.save();
 
-            return knowledge;
+            return new OkResponse('Knowledge synchronized successfully', knowledge);
 
         } catch (error: any) {
             if (error.response) {
