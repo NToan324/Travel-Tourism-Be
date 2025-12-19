@@ -178,7 +178,7 @@ class KnowledgeService {
       throw new NotFoundError("Knowledge not found");
     }
 
-    if (knowledge.status === "synced") {
+    if (knowledge.status === "synced" || knowledge.status === "syncing") {
       throw new BadRequestError("Knowledge is already synchronized");
     }
 
