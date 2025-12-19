@@ -1,5 +1,6 @@
 import "@/dbs/init.mongodb";
 import "@/configs/redis.config";
+import "@/helpers/initializeAdminUser";
 
 import compression from "compression";
 import cookieParser from "cookie-parser";
